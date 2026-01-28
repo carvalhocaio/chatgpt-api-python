@@ -2,9 +2,12 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel
 
+from rate_limiter import RateLimiter
+
 load_dotenv()
 
 client = OpenAI()
+rate_limiter = RateLimiter(max_requests=60, per_seconds=60)
 
 
 class CodeOutput(BaseModel):
@@ -14,6 +17,7 @@ class CodeOutput(BaseModel):
     example_usage: str
 
 
+rate_limiter.acquire()
 code_response = client.responses.parse(
     model="gpt-5",
     input=[
