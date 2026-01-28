@@ -17,6 +17,16 @@ Pequenos exemplos de uso do OpenAI SDK em Python.
 - Nunca envie chaves de API para o controle de versão e rotacione-as regularmente se houver suspeita de vazamento.
 - Considere implementar limitação de taxa nas suas aplicações para evitar custos inesperados.
 
+## Gestao de custos
+- Monitore o uso e os custos no dashboard da OpenAI.
+- Modelos diferentes têm preços diferentes e o custo acumula pelo número de tokens processados (entrada e saída).
+- Avalie o trade-off entre capacidade do modelo e custo para cada caso de uso.
+- Em desenvolvimento, você pode usar endpoints mock gratuitos (como o OpenAI mock API do Beeceptor) para testar a integração sem custos.
+- Ao usar mocks de terceiros, utilize uma chave fictícia e evite enviar dados sensíveis.
+
+### Mock de API (opcional)
+Para apontar seus testes para um mock, configure `OPENAI_BASE_URL` no `.env`. O SDK usa essa variável automaticamente.
+
 ## Limitacao de taxa (exemplo)
 Veja `rate_limiter.py` para um limitador simples de chamadas por processo.
 
