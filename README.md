@@ -50,3 +50,6 @@ from rate_limiter import RateLimiter
 rate_limiter = RateLimiter(max_requests=60, per_seconds=60)
 rate_limiter.acquire()
 ```
+
+## Creditos e referencia
+Este projeto foi inspirado no tutorial ["How to Integrate ChatGPT's API With Python Projects"](https://realpython.com/chatgpt-api-python/), de Abdelhadi Dyouri, publicado pela Real Python em 19 de janeiro de 2026.
