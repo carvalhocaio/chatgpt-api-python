@@ -27,6 +27,20 @@ Pequenos exemplos de uso do OpenAI SDK em Python.
 ### Mock de API (opcional)
 Para apontar seus testes para um mock, configure `OPENAI_BASE_URL` no `.env`. O SDK usa essa variável automaticamente.
 
+## Contexto de conversa
+- Para chatbots, mantenha o histórico incluindo mensagens anteriores no `input`.
+- Conversas longas consomem mais tokens e aumentam o custo; limite o histórico conforme necessário.
+
+```python
+mensagens = [
+    {"role": "developer", "content": "Você é um assistente de programação Python."},
+]
+
+mensagens.append({"role": "user", "content": "Como faço um loop em Python?"})
+resposta = client.responses.create(model="gpt-3.5-turbo", input=mensagens)
+mensagens.append({"role": "assistant", "content": resposta.output_text})
+```
+
 ## Limitacao de taxa (exemplo)
 Veja `rate_limiter.py` para um limitador simples de chamadas por processo.
 

@@ -7,42 +7,62 @@ from openai import (
     OpenAI,
     RateLimitError,
 )
+from openai.types.responses import ResponseInputItemParam
 
 from rate_limiter import RateLimiter
 
 load_dotenv()
 
-user_input = input("Como posso ajudar? ")
 client = OpenAI()
 rate_limiter = RateLimiter(max_requests=60, per_seconds=60)
 
-try:
-    rate_limiter.acquire()
-    code_response = client.responses.create(
-        model="gpt-3.5-turbo",
-        input=[
-            {
-                "role": "developer",
-                "content": (
-                    "Você um assistente de programação Python. "
-                    "Apenas aceite perguntas relacionadas a Python."
-                ),
-            },
-            {
-                "role": "user",
-                "content": f"{user_input}",
-            },
-        ],
-    )
-except AuthenticationError:
-    print("Erro de autenticação: verifique sua OPENAI_API_KEY.")
-except RateLimitError:
-    print("Limite de taxa excedido: aguarde e tente novamente.")
-except BadRequestError as exc:
-    print(f"Requisicao inválida: {exc}")
-except (APIConnectionError, APIError):
-    print("Erro de rede/servidor ao chamar a API. Tente novamente.")
-except Exception as exc:
-    print(f"Erro inesperado: {exc}")
-else:
-    print(f"\n{code_response.output_text}")
+max_historico = 12
+mensagens: list[ResponseInputItemParam] = [
+    {
+        "role": "developer",
+        "content": (
+            "Você é um assistente de programação Python. "
+            "Apenas aceite perguntas relacionadas a Python."
+        ),
+    }
+]
+
+while True:
+    user_input = input("Como posso ajudar? (digite 'sair' para encerrar) ").strip()
+    if not user_input:
+        continue
+    if user_input.lower() in {"sair", "exit", "quit"}:
+        break
+
+    mensagens.append({"role": "user", "content": user_input})
+    if len(mensagens) > max_historico + 1:
+        mensagens = [mensagens[0], *mensagens[-max_historico:]]
+
+    try:
+        rate_limiter.acquire()
+        code_response = client.responses.create(
+            model="gpt-3.5-turbo",
+            input=mensagens,
+        )
+    except AuthenticationError:
+        print("Erro de autenticação: verifique sua OPENAI_API_KEY.")
+        break
+    except RateLimitError:
+        print("Limite de taxa excedido: aguarde e tente novamente.")
+        continue
+    except BadRequestError as exc:
+        print(f"Requisição inválida: {exc}")
+        continue
+    except APIConnectionError:
+        print("Erro de rede ao chamar a API. Tente novamente.")
+        continue
+    except APIError:
+        print("Erro do servidor da API. Tente novamente.")
+        continue
+    except Exception as exc:
+        print(f"Erro inesperado: {exc}")
+        continue
+    else:
+        resposta = code_response.output_text or ""
+        mensagens.append({"role": "assistant", "content": resposta})
+        print(f"\n{resposta}")
