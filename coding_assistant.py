@@ -12,7 +12,7 @@ from rate_limiter import RateLimiter
 
 load_dotenv()
 
-user_input = input("How can I help you? ")
+user_input = input("Como posso ajudar? ")
 client = OpenAI()
 rate_limiter = RateLimiter(max_requests=60, per_seconds=60)
 
@@ -24,8 +24,8 @@ try:
             {
                 "role": "developer",
                 "content": (
-                    "You are a Python coding assistant. "
-                    "Only accept Python-related questions."
+                    "Você um assistente de programação Python. "
+                    "Apenas aceite perguntas relacionadas a Python."
                 ),
             },
             {
@@ -35,13 +35,13 @@ try:
         ],
     )
 except AuthenticationError:
-    print("Erro de autenticacao: verifique sua OPENAI_API_KEY.")
+    print("Erro de autenticação: verifique sua OPENAI_API_KEY.")
 except RateLimitError:
     print("Limite de taxa excedido: aguarde e tente novamente.")
+except BadRequestError as exc:
+    print(f"Requisicao inválida: {exc}")
 except (APIConnectionError, APIError):
     print("Erro de rede/servidor ao chamar a API. Tente novamente.")
-except BadRequestError as exc:
-    print(f"Requisicao invalida: {exc}")
 except Exception as exc:
     print(f"Erro inesperado: {exc}")
 else:

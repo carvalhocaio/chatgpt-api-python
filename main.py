@@ -1,5 +1,5 @@
 def main():
-    print("Hello from chatgpt-api-python!")
+    print("Olá do chatgpt-api-python!")
 
 
 if __name__ == "__main__":

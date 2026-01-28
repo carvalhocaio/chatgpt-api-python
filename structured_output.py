@@ -32,31 +32,34 @@ try:
             {
                 "role": "developer",
                 "content": (
-                    "You are a coding assistant. Generate clean,"
-                    "well-documented Python code."
+                    "Você é um assistente de programação. Gere código "
+                    "Python limpo e bem documentado."
                 ),
             },
             {
                 "role": "user",
-                "content": "Write a simple Python function to add two numbers.",
+                "content": "Escreva uma função simples em Python para somar dois numeros.",
             },
         ],
         text_format=CodeOutput,
     )
 except AuthenticationError:
-    print("Erro de autenticacao: verifique sua OPENAI_API_KEY.")
+    print("Erro de autenticação: verifique sua OPENAI_API_KEY.")
 except RateLimitError:
     print("Limite de taxa excedido: aguarde e tente novamente.")
+except BadRequestError as exc:
+    print(f"Requisicao inválida: {exc}")
 except (APIConnectionError, APIError):
     print("Erro de rede/servidor ao chamar a API. Tente novamente.")
-except BadRequestError as exc:
-    print(f"Requisicao invalida: {exc}")
 except Exception as exc:
     print(f"Erro inesperado: {exc}")
 else:
     code_result = code_response.output_parsed
-    print(f"Function Name: {code_result.function_name}")
-    print("\nCode:")
-    print(code_result.code)
-    print(f"\nExplanation: {code_result.explanation}")
-    print(f"\nExample Usage:\n{code_result.example_usage}")
+    if code_result is None:
+        print("A resposta não pôde ser convertida para o formato esperado.")
+    else:
+        print(f"Nome da função: {code_result.function_name}")
+        print("\nCódigo:")
+        print(code_result.code)
+        print(f"\nExplicação: {code_result.explanation}")
+        print(f"\nExemplo de uso:\n{code_result.example_usage}")
