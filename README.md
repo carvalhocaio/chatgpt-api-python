@@ -1,48 +1,74 @@
 # chatgpt-api-python
 
-Pequenos exemplos de uso do OpenAI SDK em Python.
+[![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-API-412991?logo=openai&logoColor=white)](https://platform.openai.com/)
+[![Pydantic](https://img.shields.io/badge/Pydantic-2.12%2B-E92063?logo=pydantic&logoColor=white)](https://docs.pydantic.dev/)
+[![uv](https://img.shields.io/badge/managed%20with-uv-DE5FE9)](https://docs.astral.sh/uv/)
 
-## Configuração rápida
-1. Crie um arquivo `.env` baseado em `.env.example` e defina `OPENAI_API_KEY`.
-2. Instale as dependências com o seu gerenciador preferido.
-3. Rode um dos scripts de exemplo.
+Small examples of using the OpenAI SDK in Python.
 
-## Exemplos
-- `basic_chatgpt_call.py`: chamada simples.
-- `coding_assistant.py`: assistente interativo.
-- `structured_output.py`: saída estruturada com Pydantic.
+## Table of Contents
 
-## Considerações de segurança
-- Mantenha suas chaves de API seguras. Use variáveis de ambiente ou serviços de gerenciamento de chaves em produção.
-- Nunca envie chaves de API para o controle de versão e rotacione-as regularmente se houver suspeita de vazamento.
-- Considere implementar limitação de taxa nas suas aplicações para evitar custos inesperados.
+- [Quick setup](#quick-setup)
+- [Examples](#examples)
+- [Security considerations](#security-considerations)
+- [Cost management](#cost-management)
+- [Conversation context](#conversation-context)
+- [Rate limiting (example)](#rate-limiting-example)
+- [Credits and reference](#credits-and-reference)
 
-## Gestão de custos
-- Monitore o uso e os custos no dashboard da OpenAI.
-- Modelos diferentes têm preços diferentes e o custo acumula pelo número de tokens processados (entrada e saída).
-- Avalie o trade-off entre capacidade do modelo e custo para cada caso de uso.
-- Em desenvolvimento, você pode usar endpoints mock gratuitos (como o OpenAI mock API do Beeceptor) para testar a integração sem custos.
-- Ao usar mocks de terceiros, utilize uma chave fictícia e evite enviar dados sensíveis.
+## Quick setup
 
-### Mock de API (opcional)
-Para apontar seus testes para um mock, configure `OPENAI_BASE_URL` no `.env`. O SDK usa essa variável automaticamente.
+1. Create a `.env` file based on `.env.example` and set `OPENAI_API_KEY`.
+2. Install the dependencies with your preferred package manager.
+3. Run one of the example scripts.
 
-## Contexto de conversa
-- Para chatbots, mantenha o histórico incluindo mensagens anteriores no `input`.
-- Conversas longas consomem mais tokens e aumentam o custo; limite o histórico conforme necessário.
+## Examples
+
+| Script | Description |
+| --- | --- |
+| `basic_chatgpt_call.py` | Simple one-off call to the API. |
+| `coding_assistant.py` | Interactive assistant that keeps conversation history. |
+| `structured_output.py` | Structured output parsed with Pydantic. |
+| `verify_setup.py` | Verifies your OpenAI client and API key are configured correctly. |
+| `rate_limiter.py` | A simple per-process rate limiter used by the other scripts. |
+
+## Security considerations
+
+- Keep your API keys safe. Use environment variables or a secrets manager in production.
+- Never commit API keys to version control, and rotate them regularly if a leak is suspected.
+- Consider implementing rate limiting in your applications to avoid unexpected costs.
+
+## Cost management
+
+- Monitor usage and costs on the OpenAI dashboard.
+- Different models have different prices, and cost accumulates based on the number of tokens processed (input and output).
+- Weigh the trade-off between model capability and cost for each use case.
+- During development, you can use free mock endpoints (such as OpenAI's mock API on Beeceptor) to test the integration at no cost.
+- When using third-party mocks, use a dummy key and avoid sending sensitive data.
+
+### API mock (optional)
+
+To point your tests at a mock, set `OPENAI_BASE_URL` in `.env`. The SDK uses this variable automatically.
+
+## Conversation context
+
+- For chatbots, maintain history by including previous messages in `input`.
+- Long conversations consume more tokens and increase cost; trim the history as needed.
 
 ```python
-mensagens = [
-    {"role": "developer", "content": "Você é um assistente de programação Python."},
+messages = [
+    {"role": "developer", "content": "You are a Python programming assistant."},
 ]
 
-mensagens.append({"role": "user", "content": "Como faço um loop em Python?"})
-resposta = client.responses.create(model="gpt-3.5-turbo", input=mensagens)
-mensagens.append({"role": "assistant", "content": resposta.output_text})
+messages.append({"role": "user", "content": "How do I write a loop in Python?"})
+response = client.responses.create(model="gpt-3.5-turbo", input=messages)
+messages.append({"role": "assistant", "content": response.output_text})
 ```
 
-## Limitação de taxa (exemplo)
-Veja `rate_limiter.py` para um limitador simples de chamadas por processo.
+## Rate limiting (example)
+
+See `rate_limiter.py` for a simple per-process call limiter.
 
 ```python
 from rate_limiter import RateLimiter
@@ -51,5 +77,6 @@ rate_limiter = RateLimiter(max_requests=60, per_seconds=60)
 rate_limiter.acquire()
 ```
 
-## Créditos e referência
-Este projeto foi inspirado no tutorial ["How to Integrate ChatGPT's API With Python Projects"](https://realpython.com/chatgpt-api-python/), de Abdelhadi Dyouri, publicado pela Real Python em 19 de janeiro de 2026.
+## Credits and reference
+
+This project was inspired by the tutorial ["How to Integrate ChatGPT's API With Python Projects"](https://realpython.com/chatgpt-api-python/), by Abdelhadi Dyouri, published by Real Python on January 19, 2026.

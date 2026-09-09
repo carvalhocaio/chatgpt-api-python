@@ -16,53 +16,53 @@ load_dotenv()
 client = OpenAI()
 rate_limiter = RateLimiter(max_requests=60, per_seconds=60)
 
-max_historico = 12
-mensagens: list[ResponseInputItemParam] = [
+max_history = 12
+messages: list[ResponseInputItemParam] = [
     {
         "role": "developer",
         "content": (
-            "Você é um assistente de programação Python. "
-            "Apenas aceite perguntas relacionadas a Python."
+            "You are a Python programming assistant. "
+            "Only accept questions related to Python."
         ),
     }
 ]
 
 while True:
-    user_input = input("Como posso ajudar? (digite 'sair' para encerrar) ").strip()
+    user_input = input("How can I help? (type 'exit' to quit) ").strip()
     if not user_input:
         continue
-    if user_input.lower() in {"sair", "exit", "quit"}:
+    if user_input.lower() in {"exit", "quit"}:
         break
 
-    mensagens.append({"role": "user", "content": user_input})
-    if len(mensagens) > max_historico + 1:
-        mensagens = [mensagens[0], *mensagens[-max_historico:]]
+    messages.append({"role": "user", "content": user_input})
+    if len(messages) > max_history + 1:
+        messages = [messages[0], *messages[-max_history:]]
 
     try:
         rate_limiter.acquire()
         code_response = client.responses.create(
             model="gpt-3.5-turbo",
-            input=mensagens,
+            input=messages,
         )
     except AuthenticationError:
-        print("Erro de autenticação: verifique sua OPENAI_API_KEY.")
+        print("Authentication error: check your OPENAI_API_KEY.")
         break
     except RateLimitError:
-        print("Limite de taxa excedido: aguarde e tente novamente.")
+        print("Rate limit exceeded: wait and try again.")
         continue
     except BadRequestError as exc:
-        print(f"Requisição inválida: {exc}")
+        print(f"Invalid request: {exc}")
         continue
     except APIConnectionError:
-        print("Erro de rede ao chamar a API. Tente novamente.")
+        print("Network error calling the API. Try again.")
         continue
     except APIError:
-        print("Erro do servidor da API. Tente novamente.")
+        print("API server error. Try again.")
         continue
     except Exception as exc:
-        print(f"Erro inesperado: {exc}")
+        print(f"Unexpected error: {exc}")
         continue
     else:
-        resposta = code_response.output_text or ""
-        mensagens.append({"role": "assistant", "content": resposta})
-        print(f"\n{resposta}")
+        response = code_response.output_text or ""
+        messages.append({"role": "assistant", "content": response})
+        print(f"\n{response}")

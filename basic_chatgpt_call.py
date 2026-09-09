@@ -19,19 +19,19 @@ try:
     rate_limiter.acquire()
     text_response = client.responses.create(
         model="gpt-3.5-turbo",
-        input="Conte uma piada sobre programação em Python",
+        input="Tell a joke about Python programming",
     )
 except AuthenticationError:
-    print("Erro de autenticação: verifique sua OPENAI_API_KEY.")
+    print("Authentication error: check your OPENAI_API_KEY.")
 except RateLimitError:
-    print("Limite de taxa excedido: aguarde e tente novamente.")
+    print("Rate limit exceeded: wait and try again.")
 except BadRequestError as exc:
-    print(f"Requisicao inválida: {exc}")
+    print(f"Invalid request: {exc}")
 except APIConnectionError:
-    print("Erro de rede ao chamar a API. Tente novamente.")
+    print("Network error calling the API. Try again.")
 except APIError:
-    print("Erro do servidor da API. Tente novamente.")
+    print("API server error. Try again.")
 except Exception as exc:
-    print(f"Erro inesperado: {exc}")
+    print(f"Unexpected error: {exc}")
 else:
-    print(f"Piada:\n{text_response.output_text}")
+    print(f"Joke:\n{text_response.output_text}")

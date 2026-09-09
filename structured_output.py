@@ -32,34 +32,34 @@ try:
             {
                 "role": "developer",
                 "content": (
-                    "Você é um assistente de programação. Gere código "
-                    "Python limpo e bem documentado."
+                    "You are a programming assistant. Generate clean, "
+                    "well-documented Python code."
                 ),
             },
             {
                 "role": "user",
-                "content": "Escreva uma função simples em Python para somar dois numeros.",
+                "content": "Write a simple Python function to add two numbers.",
             },
         ],
         text_format=CodeOutput,
     )
 except AuthenticationError:
-    print("Erro de autenticação: verifique sua OPENAI_API_KEY.")
+    print("Authentication error: check your OPENAI_API_KEY.")
 except RateLimitError:
-    print("Limite de taxa excedido: aguarde e tente novamente.")
+    print("Rate limit exceeded: wait and try again.")
 except BadRequestError as exc:
-    print(f"Requisicao inválida: {exc}")
+    print(f"Invalid request: {exc}")
 except (APIConnectionError, APIError):
-    print("Erro de rede/servidor ao chamar a API. Tente novamente.")
+    print("Network/server error calling the API. Try again.")
 except Exception as exc:
-    print(f"Erro inesperado: {exc}")
+    print(f"Unexpected error: {exc}")
 else:
     code_result = code_response.output_parsed
     if code_result is None:
-        print("A resposta não pôde ser convertida para o formato esperado.")
+        print("The response could not be converted to the expected format.")
     else:
-        print(f"Nome da função: {code_result.function_name}")
-        print("\nCódigo:")
+        print(f"Function name: {code_result.function_name}")
+        print("\nCode:")
         print(code_result.code)
-        print(f"\nExplicação: {code_result.explanation}")
-        print(f"\nExemplo de uso:\n{code_result.example_usage}")
+        print(f"\nExplanation: {code_result.explanation}")
+        print(f"\nUsage example:\n{code_result.example_usage}")
